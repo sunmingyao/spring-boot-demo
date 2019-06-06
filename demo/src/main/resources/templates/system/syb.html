@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>工厂小微维护</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body class="layui-layout-body" style="overflow-x: hidden;overflow-y: auto">
+
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">工厂小微管理</div>
+                    <div class="layui-card-body">
+                        <!--<form class="layui-form" action="" style="">-->
+
+
+                            <div class="layui-form-item layui-form-pane">
+                                <!--<form class="layui-form" action="">-->
+
+                                <div id="quiz1" class="layui-input-inline  layui-form">
+                                        <select name="quiz1" id = 'mySelect'>
+                                            <option value="">请选择产品类别</option>
+                                        </select>
+                                </div>
+                                <!--</form>-->
+                                <label class="layui-form-label">工厂小微</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="sybName" lay-verify="pass" placeholder="请输入小微关键字" autocomplete="off" class="layui-input">
+                                </div>
+
+                                <div>
+                                    <button  id="sybBtn" data-type="reload" class="layui-btn">查询小微</button>
+                                    <button  id="deleteSybBtn" class="layui-btn layui-btn-danger" data-type="getCheckData">删除小微</button>
+                                    <button  id="sybAdd" class="layui-btn layui-btn-warm">添加小微</button>
+
+                                </div>
+                            </div>
+                        <!--</form>-->
+                        <table class="layui-hide" id="syb_table" lay-filter="user"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id ="addSyb2" style="display:none">
+<div id="addSyb" style="display:none">
+    <div style="padding:30px 20px 30px 30px;">
+
+        <form class="layui-form layui-form-pane" action="">
+
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">小微编码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="sybAddCode" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">小微名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="sybAddName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        </form>
+        <button class="layui-btn layui-btn-warm" onclick="addSyb()">确认添加</button>
+        <button class="layui-btn layui-btn-danger" onclick="closeB()">取消添加</button>
+    </div>
+</div>
+</div>
+<script src="../layui/layui.all.js"></script>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        var $ = layui.jquery;
+
+        //方法级渲染
+        table.render({
+            elem: '#syb_table'
+            ,url: '/sybApi/listSyb'
+            ,cols: [
+                [
+                {checkbox: true, fixed: true}
+                ,{field:'id', title: 'ID', width:80,  fixed: true}
+                ,{field:'sybTypeCode', title: '产品类别编码'}
+                ,{field:'sybTypeName', title: '产品类别名称'}
+                ,{field:'code', title: '小微编码',width:80}
+                ,{field:'name', title: '小微名称'}
+                ,{field:'deleteFlag', title: '删除标志'}
+                ,{field:'operateUser', title: '操作人'}
+                ,{field:'operateTime', title: '创建操作时间',templet: "<div>{{layui.util.toDateString(d.ordertime, 'yyyy-MM-dd HH:mm:ss')}}</div>"}
+
+                ]
+            ]
+            ,id: 'Reload'
+            ,page: true
+            // ,height: 560
+            // ,where:{
+            //     name:$('#sybTypeName').val()
+            // }
+        });
+
+        var $ = layui.$, active = {
+            reload: function(){
+                //执行重载
+                table.reload('Reload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where:{
+                        name:$('#sybName').val(),
+                        sybTypeCode:$('#mySelect').val()
+                    }
+                });
+            }
+        };
+
+        //查询按钮
+        $('#sybBtn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        $('#sybAdd').on('click',function () {
+            $('#addSyb').attr("style","display:block;");//显示div
+            $('#addSyb2').attr("style","display:block;");//显示div
+
+            layer.open({
+                title:"添加工厂小微",
+                type: 1,
+                skin: 'layui-layer-molv', //样式类名
+                closeBtn: 0, //不显示关闭按钮
+                anim: 2,
+                shadeClose: false, //开启遮罩关闭
+                scrollbar: true,
+                content: $('#addSyb2')
+            });
+        })
+    });
+    
+    function closeB() {
+        var $ = layui.jquery;
+        layer.closeAll();
+        $('#addSyb2').attr("style","display:none;");//显示div
+        $('#addSyb').attr("style","display:none;");//显示div
+
+        //重新载入表格
+        layui.table.reload('Reload', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            ,where:{
+                name:$('#sybName').val()
+            }
+        });
+
+    }
+    function addSyb() {
+        var $ = layui.jquery;
+       var sybAddCode =  $('#sybAddCode').val();
+       var sybAddName =  $('#sybAddName').val();
+       var sytTypeCode = $('#mySelect').val();
+
+       if(sytTypeCode == null || sytTypeCode == "" || sytTypeCode == "undefind"){
+           layer.msg("请线选择事业部！");
+           return;
+       }
+
+       alert(sytTypeCode);
+
+        $.ajax({
+            url: '/sybApi/addSyb',
+            type: "POST",
+            cache: false,
+            async:false,
+            xhrFields: {
+                withCredentials: true
+            },
+            data:{
+                "code":sybAddCode,
+                "name":sybAddName,
+                "sybTypeCode":sytTypeCode
+            },
+            success: function (data) {
+
+                //返回信息
+                layer.msg(JSON.parse(data).message)
+
+                //2秒后关闭弹窗
+                setTimeout(function(){
+                    closeB();
+                },2000)
+
+            },
+            error:function () {
+                alert("出错了！");
+            }
+        })
+    }
+    
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var checkStatus = layui.table.checkStatus('Reload')
+                    ,data = checkStatus.data;
+
+                var ids = "";
+                for(var i in data){
+                    ids = ids+"-"+data[i].id;
+                }
+                    $.ajax({
+                        url: '/sybApi/deleteSyb',
+                        type: "POST",
+                        cache: false,
+                        async:false,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        data:{
+                            "id":ids
+                        },
+                        success: function (data) {
+                            //返回信息
+                            layer.msg(JSON.parse(data).message)
+                            setTimeout(function(){
+                                layui.table.reload('Reload', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                    ,where:{
+                                        name:$('#sybName').val()
+                                    }
+                                });
+                            },2000)
+                        },
+                        error:function () {
+                            alert("出错了！");
+
+                        }
+                    })
+
+
+            }
+        };
+    $('#deleteSybBtn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+    $(function () {
+        var obj=document.getElementById('mySelect');
+
+        $.ajax({
+            url: '/sybTypeApi/getSybTypeForSelect',
+            type: "POST",
+            cache: false,
+            async:false,
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+
+                for(var i=0;i<JSON.parse(data).length;i++){
+                    obj.add(new Option(JSON.parse(data)[i].name,JSON.parse(data)[i].code));
+
+                }
+            },
+            error:function () {
+            }
+        })
+
+
+
+        //取得单选框信息
+        layui.use('form',function(){
+
+            var form=layui.form;//注:这是1.0升级到2.0以后的写法,2.0以前的依旧是layui.form()带括号。
+
+            form.render();//这一步加上基本上该出来的都能出来了，部分下拉框如果还不能出来的话
+
+
+        })
+
+    });
+
+
+</script>
+
+</body>
+</html>

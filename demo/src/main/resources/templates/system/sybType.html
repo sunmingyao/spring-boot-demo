@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>产品类别维护</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body class="layui-layout-body" style="overflow-x: hidden;overflow-y: auto">
+
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div style="padding: 20px; background-color: #F2F2F2;">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">产品类别管理</div>
+                    <div class="layui-card-body">
+                        <!--<form class="layui-form" action="" style="">-->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">产品类别</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" id="sybTypeName" lay-verify="pass" placeholder="请输入产品类别关键字" autocomplete="off" class="layui-input">
+                                </div>
+
+                                <div>
+                                    <button  id="sybTypeBtn" data-type="reload" class="layui-btn">查询类别</button>
+                                    <button  id="deleteSybTypeBtn" class="layui-btn layui-btn-danger" data-type="getCheckData">删除类别</button>
+                                    <button  id="sybTypeAdd" class="layui-btn layui-btn-warm">添加类别</button>
+
+                                </div>
+                            </div>
+                        <!--</form>-->
+                        <table class="layui-hide" id="syb_type_table" lay-filter="user"></table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id ="addSybType2" style="display:none">
+<div id="addSybType" style="display:none">
+    <div style="padding:30px 20px 30px 30px;">
+
+        <form class="layui-form layui-form-pane" action="">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">事业部编码</label>
+            <div class="layui-input-inline">
+                <input type="text" id="sybAddCode" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">事业部名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="sybAddName" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        </form>
+        <button class="layui-btn layui-btn-warm" onclick="addSybType()">确认添加</button>
+        <button class="layui-btn layui-btn-danger" onclick="closeB()">取消添加</button>
+    </div>
+</div>
+</div>
+<script src="../layui/layui.all.js"></script>
+
+<script>
+    layui.use('table', function(){
+        var table = layui.table;
+        var $ = layui.jquery;
+
+        //方法级渲染
+        table.render({
+            elem: '#syb_type_table'
+            ,url: '/sybTypeApi/listSybType'
+            ,cols: [
+                [
+                {checkbox: true, fixed: true}
+                ,{field:'id', title: 'ID', width:80,  fixed: true}
+                ,{field:'code', title: '事业部编码', width:80}
+                ,{field:'name', title: '事业部名称'}
+                ,{field:'deleteFlag', title: '删除标志'}
+                ,{field:'operateUser', title: '操作人'}
+                ,{field:'operateTime', title: '创建操作时间',templet: "<div>{{layui.util.toDateString(d.ordertime, 'yyyy-MM-dd HH:mm:ss')}}</div>"}
+
+                ]
+            ]
+            ,id: 'Reload'
+            ,page: true
+            // ,height: 560
+            // ,where:{
+            //     name:$('#sybTypeName').val()
+            // }
+        });
+
+        var $ = layui.$, active = {
+            reload: function(){
+                //执行重载
+                table.reload('Reload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where:{
+                        name:$('#sybTypeName').val()
+                    }
+                });
+            }
+        };
+
+        //查询按钮
+        $('#sybTypeBtn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        $('#sybTypeAdd').on('click',function () {
+            $('#addSybType').attr("style","display:block;");//显示div
+            $('#addSybType2').attr("style","display:block;");//显示div
+
+            layer.open({
+                title:"添加事业部",
+                type: 1,
+                skin: 'layui-layer-molv', //样式类名
+                closeBtn: 0, //不显示关闭按钮
+                anim: 2,
+                shadeClose: false, //开启遮罩关闭
+                scrollbar: true,
+                content: $('#addSybType2')
+            });
+        })
+    });
+    
+    function closeB() {
+        var $ = layui.jquery;
+        layer.closeAll();
+        $('#addSybType2').attr("style","display:none;");//显示div
+        $('#addSybType').attr("style","display:none;");//显示div
+
+        //重新载入表格
+        layui.table.reload('Reload', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            }
+            ,where:{
+                name:$('#sybTypeName').val()
+            }
+        });
+
+    }
+    function addSybType() {
+        var $ = layui.jquery;
+       var sybAddCode =  $('#sybAddCode').val();
+       var sybAddName =  $('#sybAddName').val();
+
+        $.ajax({
+            url: '/sybTypeApi/addSybType',
+            type: "POST",
+            cache: false,
+            async:false,
+            xhrFields: {
+                withCredentials: true
+            },
+            data:{
+                "code":sybAddCode,
+                "name":sybAddName
+            },
+            success: function (data) {
+
+                //返回信息
+                layer.msg(JSON.parse(data).message)
+
+                //2秒后关闭弹窗
+                setTimeout(function(){
+                    closeB();
+                },2000)
+
+            },
+            error:function () {
+                alert("出错了！");
+            }
+        })
+    }
+    
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var checkStatus = layui.table.checkStatus('Reload')
+                    ,data = checkStatus.data;
+
+                var ids = "";
+                for(var i in data){
+                    ids = ids+"-"+data[i].id;
+                }
+                    $.ajax({
+                        url: '/sybTypeApi/deleteSybType',
+                        type: "POST",
+                        cache: false,
+                        async:false,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        data:{
+                            "id":ids
+                        },
+                        success: function (data) {
+                            //返回信息
+                            layer.msg(JSON.parse(data).message)
+                            setTimeout(function(){
+                                layui.table.reload('Reload', {
+                                    page: {
+                                        curr: 1 //重新从第 1 页开始
+                                    }
+                                    ,where:{
+                                        name:$('#sybTypeName').val()
+                                    }
+                                });
+                            },2000)
+                        },
+                        error:function () {
+                            alert("出错了！");
+
+                        }
+                    })
+
+
+            }
+        };
+    $('#deleteSybTypeBtn').on('click', function(){
+        var type = $(this).data('type');
+        active[type] ? active[type].call(this) : '';
+    });
+
+
+</script>
+
+</body>
+</html>

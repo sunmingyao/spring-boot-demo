@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.dao.RoalDao" >
+    <resultMap id="BaseResultMap" type="com.example.demo.entiy.Roal" >
+        <result column="id" property="id" jdbcType="INTEGER" />
+        <result column="roal_name" property="roalName" jdbcType="VARCHAR" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="modify" property="modify" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="VARCHAR" />
+        <result column="modify_time" property="modifyTime" jdbcType="VARCHAR" />
+        <result column="is_lock" property="isLock" jdbcType="VARCHAR" />
+
+    </resultMap>
+    <select id="getRoalListByUserId" resultMap="BaseResultMap">
+        select * from t_roal where id = #{id}
+    </select>
+</mapper>

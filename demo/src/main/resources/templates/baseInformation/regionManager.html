@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+</head>
+<body class="layui-layout-body" style="overflow-x: hidden;overflow-y: auto">
+
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">区域维护</div>
+
+                <!-- 卡片内到栅格 -->
+                <div class="layui-card-body">
+                    <div class="layui-row">
+                        <div class="layui-col-md5">
+                            <div class="grid-demo grid-demo-bg1">
+                                <!-- 区域列表 -->
+                                <ul id="regionList"></ul>
+                            </div>
+                        </div>
+                        <div class="layui-col-md7">
+                            <div class="grid-demo">
+                                <form class="layui-form" action="" style="display: none;border-left:1px solid rgba(81,81,81,0.62)" id = "addAndEdit">
+                                    <div class="layui-form-item">
+                                        <label class="layui-form-label">是否使用</label>
+                                        <div class="layui-input-block">
+                                            <input type="checkbox" id="switchTest" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF">
+                                            <div  class="layui-unselect layui-form-switch layui-form-onswitch" lay-skin="_switch"><em>ON</em><i></i></div>
+                                        </div>
+                                    </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">区域编码</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="regionCode" name="regionCode" value="" disabled="disabled" lay-verify="required" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-inline">
+                                        <label class="layui-form-label">区域名称</label>
+                                        <div class="layui-input-inline">
+                                            <input type="text" id="regionName" name="regionName" value="" lay-verify="required" autocomplete="off" class="layui-input">
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                    <div class="layui-form-item">
+                                        <div class="layui-input-block">
+                                            <button class="layui-btn" lay-submit="" lay-filter="editSubmit">提   交</button>&nbsp;
+                                            <button class="layui-btn" lay-submit="" lay-filter="addSubmit"> 添加新区域</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 卡片内到栅格 -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="../layui/layui.all.js"></script>
+
+<!-- 加载树形菜单 -->
+<script>
+    layui.use(['tree', 'layer','form'], function(){
+        var layer = layui.layer
+            ,$ = layui.jquery;
+        var form = layui.form;
+        $.ajax({
+            url : "../regionApi/getRegionTreeNodesStr",
+            type : 'POST',
+            success : function(data) {
+                layui.tree({
+                    elem: '#regionList'
+                    ,nodes: JSON.parse(data)
+                    ,click: function(node){
+
+                        document.getElementById('addAndEdit').style.display='';
+
+                        $("#regionCode").val(node.code);
+                        $("#regionName").val(node.name);
+
+                        if(node.flag == "N"){
+                        $("#switchTest").attr("checked",false);
+                        form.render('checkbox');
+                        }else {
+                            $("#switchTest").prop("checked",true);
+                            form.render('checkbox');
+                        }
+                    }
+                });
+            },
+            error: function() {
+            }
+        });
+    });
+
+</script>
+<!-- 表单处理 -->
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,$ = layui.jquery
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+        //日期
+        laydate.render({
+            elem: '#date'
+        });
+        laydate.render({
+            elem: '#date1'
+        });
+
+        //创建一个编辑器
+        var editIndex = layedit.build('LAY_demo_editor');
+
+        //自定义验证规则
+        form.verify({
+            title: function(value){
+                if(value.length < 5){
+                    return '标题至少得5个字符啊';
+                }
+            }
+            ,pass: [/(.+){6,12}$/, '密码必须6到12位']
+            ,content: function(value){
+                layedit.sync(editIndex);
+            }
+        });
+
+        //监听指定开关
+        form.on('switch(switchTest)', function(data){
+            $("#switchTest").val(this.checked ? 'true' : 'false');
+            // alert($("#switchTest").val());
+            // layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+            //     offset: '6px'
+            // });
+            // layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
+        //监听提交
+        form.on('submit(editSubmit)', function(data){
+//            layer.alert(JSON.stringify(data.field), {
+//                title: '最终的提交信息'
+//            })
+
+            var regionCode = layui.jquery("#regionCode").val();
+            var regionName = layui.jquery("#regionName").val();
+            var switchTest = "on";
+            if($("#switchTest").val() != "true"){
+             switchTest = "off";
+            }
+
+        $.ajax({
+                url : "../regionApi/unActiveRegion",
+                type : 'POST',
+                data : "regionCode="+regionCode+"&regionName="+regionName+"&open="+switchTest,
+                success : function(data) {
+                    location.reload(true);
+                },
+                error: function() {
+                }
+            });
+
+
+
+            return false;
+        });
+        form.on('submit(addSubmit)', function (data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })
+            return false;
+        })
+
+    });
+</script>
+</body>
+</html>

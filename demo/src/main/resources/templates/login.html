@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="max-age=30" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>登录</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        #logdiv{
+            width: 310px;
+            height: 150px;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            margin: auto;
+        }
+        #logdivp{
+            width: 340px;
+            height: 180px;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            margin: auto;
+        }
+    </style>
+    <script>
+
+        function login() {
+            var $ = layui.jquery;
+            var layer = layui.layer;
+          var userName = $("#userName").val();
+          var passWord = $("#passWord").val();
+
+            //校验一下用户名和密码
+          if(userName == null || userName == "" || userName == "undefind"){
+              layer.msg('用户名不能为空！');
+              return false;
+            };
+            if(passWord == null || passWord == "" || passWord == "undefind"){
+                layer.msg('密码不能为空');
+                return ;
+            };
+          //ajax请求登录
+            $.ajax({
+                url:'/loginApi/login',
+                type:"POST",
+                cache: false,
+                xhrFields: {
+                    withCredentials: true
+                },
+                data:{
+                    "userName":userName,
+                    "passWord":passWord
+                },
+                success:function(data) {
+
+
+                    if(JSON.parse(data).code == "10"){
+                        //如果成功 跳转页面
+
+                        window.location.href="/index";
+                    }else{
+                        alert("账户或者密码不正确！");
+                    }
+
+                }
+            })
+
+        }
+    </script>
+</head>
+<body>
+<div id="logdivp">
+    <div id="logdiv">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input id="userName" type="text" name="userName" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                    <input id="passWord" type="password" name="passWord" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <!-- 使用button会刷新表单 所以用a代替 -->
+            <div  style="float:right;margin-right: 10px"><a class="layui-btn" onclick="login();">登&nbsp;&nbsp;&nbsp;录</a></div>
+
+        </form>
+    </div>
+</div>
+<script src="../layui/layui.all.js"></script>
+</body>
+</html>

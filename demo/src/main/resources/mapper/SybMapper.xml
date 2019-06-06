@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.dao.SybDao">
+    <resultMap id="BaseResultMap" type="com.example.demo.entiy.Syb">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="syb_type_code" property="sybTypeCode" jdbcType="VARCHAR"/>
+        <result column="syb_type_name" property="sybTypeName" jdbcType="VARCHAR"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="VARCHAR"/>
+        <result column="operate_user" property="operateUser" jdbcType="VARCHAR"/>
+        <result column="operate_time" property="operateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <select id="listSyb" resultMap="BaseResultMap">
+        select s.*,t.name as syb_type_name from t_syb s left join t_syb_type t on t.code = s.syb_type_code
+        <where>
+            <if test="name != null and name != '' ">
+                and s.name like concat(concat("%",#{name}),"%")
+            </if>
+            <if test="sybTypeCode != null and sybTypeCode != '' ">
+                and s.syb_type_code = #{sybTypeCode}
+            </if>
+        </where>
+        order by s.delete_flag
+    </select>
+    <insert id="addSyb" parameterType="com.example.demo.entiy.Syb">
+        insert into t_syb(name,code,syb_type_code,delete_flag,operate_user,operate_time) values(#{name},#{code},#{sybTypeCode},#{deleteFlag},#{operateUser},#{operateTime})
+    </insert>
+    <update id="deleteSyb">
+        update t_syb set delete_flag = 1 where id = #{id}
+    </update>
+    <select id="getById" resultMap="BaseResultMap">
+        select * from t_syb where id = #{id}
+    </select>
+</mapper>

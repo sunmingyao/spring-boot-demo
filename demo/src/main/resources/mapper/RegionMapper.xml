@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.dao.RegionDao" >
+    <resultMap id="BaseResultMap" type="com.example.demo.entiy.Region" >
+        <result column="id" property="id" jdbcType="BIGINT" />
+        <result column="region_code" property="regionCode" jdbcType="VARCHAR" />
+        <result column="region_name" property="regionName" jdbcType="VARCHAR" />
+        <result column="is_actived" property="isActived" jdbcType="VARCHAR" />
+        <result column="create_user" property="createUser" jdbcType="BIGINT" />
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="last_upd_user" property="lastUpdUser" jdbcType="BIGINT" />
+        <result column="last_upd_date" property="lastUpdDate" jdbcType="TIMESTAMP" />
+        <result column="is_dedu_cash" property="isDeduCash" jdbcType="VARCHAR" />
+        <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+        <result column="grade" property="grade" jdbcType="INTEGER" />
+        <result column="is_endnote" property="isEndnote" jdbcType="VARCHAR" />
+        <result column="market_code" property="marketCode" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="Base_Column_List" >
+        id, region_code, region_name, is_actived, create_user, create_date, last_upd_user, last_upd_date, is_dedu_cash, parent_id, grade, is_endnote, market_code
+    </sql>
+
+    <select id="listRegion" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from hm_region
+    </select>
+    <select id="getRegion" resultType="com.example.demo.entiy.Region" parameterType="java.lang.String">
+        select * from hm_region where region_code = #{regionCode}
+    </select>
+    <update id="updateRegion" parameterType="com.example.demo.entiy.Region">
+        update hm_region
+
+        <set>
+            <if test="regionCode != null" >
+                region_code = #{regionCode,jdbcType=VARCHAR},
+            </if>
+            <if test="regionName != null" >
+                region_name = #{regionName,jdbcType=VARCHAR},
+            </if>
+            <if test="isActived != null" >
+                is_actived = #{isActived,jdbcType=VARCHAR},
+            </if>
+            <if test="createUser != null" >
+                create_user = #{createUser,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null" >
+                create_date = #{createDate,jdbcType=DATE},
+            </if>
+            <if test="lastUpdUser != null" >
+                last_upd_user = #{lastUpdUser,jdbcType=VARCHAR},
+            </if>
+            <if test="lastUpdDate != null" >
+                last_upd_date = #{lastUpdDate,jdbcType=DATE},
+            </if>
+            <if test="isDeduCash != null" >
+                is_dedu_cash = #{isDeduCash,jdbcType=VARCHAR},
+            </if>
+            <if test="parentId != null" >
+                parent_id = #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="grade != null" >
+            grade = #{grade,jdbcType=INTEGER},
+            </if>
+            <if test="isEndnote != null" >
+                is_endnote = #{isEndnote,jdbcType=VARCHAR},
+            </if>
+            <if test="marketCode != null" >
+                market_code = #{marketCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            AND ID = #{id,jdbcType=DECIMAL}
+        </where>
+    </update>
+    <update id="updateParentRegionActive" parameterType="java.lang.Integer">
+        update hm_region t set t.is_actived = 'Y' where t.id = #{id}
+    </update>
+
+</mapper>

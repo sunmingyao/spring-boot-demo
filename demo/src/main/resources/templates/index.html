@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-Control" content="max-age=30" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>后台</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">后台管理系统</div>
+        <!--<ul class="layui-nav layui-layout-left">-->
+            <!--<li class="layui-nav-item"><a href="">控制台</a></li>-->
+            <!--<li class="layui-nav-item"><a href="">商品管理</a></li>-->
+            <!--<li class="layui-nav-item"><a href="">用户</a></li>-->
+            <!--<li class="layui-nav-item">-->
+                <!--<a href="javascript:;">其它系统</a>-->
+                <!--<dl class="layui-nav-child">-->
+                    <!--<dd><a href="">邮件管理</a></dd>-->
+                    <!--<dd><a href="">消息管理</a></dd>-->
+                    <!--<dd><a href="">授权管理</a></dd>-->
+                <!--</dl>-->
+            <!--</li>-->
+        <!--</ul>-->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+                    admin
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="" onclick="logout()">退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!--<div title="菜单缩放" class="kit-side-fold"><i class="layui-icon layui-icon-shrink-right" aria-hidden="true"></i></div>-->
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li  class="layui-nav-item layui-nav-itemed">
+                    <a id = "baseInfo"  class="a" href="javascript:;"><i class="layui-icon layui-icon-util"></i> <span> 用户管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd style="display:none" class="dd" id = "index2"><a href="javascript:;"><i class="layui-icon layui-icon-star-fill"></i> <span>首页提醒</span></a></dd>
+                        <dd style="display:none" class="dd" id = "region/regionManager"><a href="javascript:;"><i class="layui-icon layui-icon-flag"></i> <span>区域管理</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-user"></i> <span>角色管理</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-user"></i> <span>用户维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-flag"></i> <span>服务地点维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-home"></i> <span>餐厅设置</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-note"></i> <span>工位维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-set"></i> <span>物料类别维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-set-sm"></i> <span>基础物料维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-app"></i> <span>菜品类别维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-set"></i> <span>菜品维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-set"></i> <span>补贴率维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-set-fill"></i> <span>大区物料维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-set-fill"></i> <span>物料产品维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-list"></i> <span>检测原材料清单</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-user"></i> <span>非统购供应商维护</span></a></dd>
+                        <dd style="display:none" class="dd"><a href="javascript:;"><i class="layui-icon layui-icon-auz"></i> <span>非统购供应商审核</span></a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a id="system" class="a" href="javascript:;"><i class="layui-icon layui-icon-chart-screen"></i> <span> 系统管理</span></a>
+                    <dl class="layui-nav-child">
+                        <dd  style="display:none" class="dd" id="system/sybType"><a href="javascript:;"><i class="layui-icon layui-icon-form"></i> <span>产品类别维护</span></a></dd>
+                        <dd  style="display:none" class="dd" id="system/syb"><a href="javascript:;"><i class="layui-icon layui-icon-app"></i> <span>事业部维护</span></a></dd>
+                        <dd  style="display:none" class="dd" id="system/dept"><a href="javascript:;"><i class="layui-icon layui-icon-set"></i> <span>小微维护</span></a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <!--<table class="layui-hide" id="test"></table>-->
+        <!-- 内容主体区域 -->
+        <iframe id="mainIrfame" in="mainIframe" src="" frameborder="0" width="100%" height="100%"></iframe>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © Haier.com - 样机管控系统
+    </div>
+</div>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<!-- 切换菜单 -->
+<script>
+    $('.dd').click(function () {
+        $("#mainIrfame").attr('src',this.id);
+    });
+</script>
+<script src="layui/layui.all.js"></script>
+<!--<script>-->
+    <!--layui.use('table', function(){-->
+        <!--var table = layui.table;-->
+
+        <!--table.render({-->
+            <!--elem: '#test'-->
+            <!--,url:'/getAllUserData'-->
+            <!--,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增-->
+            <!--,page: true-->
+            <!--,cols: [-->
+                <!--[-->
+                <!--{field:'id', width:80, title: 'ID', sort: true}-->
+                <!--,{field:'name', width:80, title: '用户名'}-->
+            <!--]-->
+            <!--]-->
+        <!--});-->
+    <!--});-->
+<!--</script>-->
+<script type="text/javascript">
+    //JavaScript代码区域
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+    var $ = layui.jquery;
+    var isShow = true;  //定义一个标志位
+    $('.kit-side-fold').click(function(){
+        //选择出所有的span，并判断是不是hidden
+        $('.layui-nav-item span').each(function(){
+            if($(this).is(':hidden')){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
+        //判断isshow的状态
+        if(isShow){
+            $('.layui-side.layui-bg-black').width(60); //设置宽度
+            $('.kit-side-fold i').css('margin-right', '70%');  //修改图标的位置
+            //将footer和body的宽度修改
+            $('.layui-body').css('left', 60+'px');
+            $('.layui-footer').css('left', 60+'px');
+            //将二级导航栏隐藏
+            $('dd span').each(function(){
+                $(this).hide();
+            });
+            //修改标志位
+            isShow =false;
+        }else{
+            $('.layui-side.layui-bg-black').width(200);
+            $('.kit-side-fold i').css('margin-right', '10%');
+            $('.layui-body').css('left', 200+'px');
+            $('.layui-footer').css('left', 200+'px');
+            $('dd span').each(function(){
+                $(this).show();
+            });
+            isShow =true;
+        }
+    });
+
+</script>
+<script>
+    var $ = layui.jquery;
+    //文档加载完后获取用户的权限信息
+    $(function() {
+        if (window.parent != window) {//iframe中session超时,跳转打开窗口还是嵌入在iframe中问题解决
+            window.parent.location.reload(true);
+        }
+    });
+    $(function () {
+
+        $.ajax({
+            url: '/userApi/resourceList',
+            type: "POST",
+            success: function (data) {
+              var t = JSON.parse(data);
+              var arr = new Array();
+              var ex =  document.getElementsByClassName("a");
+
+
+                for(var i=0;i<t.length;i++){
+                    if(t[i].parentId != 0) {
+
+                        document.getElementById(t[i].source).style.display = "inline";
+                    }else{
+                        arr.push(t[i].source);
+                    }
+
+                }
+
+                for(var j=0;j<ex.length;j++){
+                  if($.inArray(ex[j].id, arr)<0){
+                      document.getElementById(ex[j].id).style.display = "none";
+                    }
+                }
+            }
+        })
+    })
+</script>
+<script>
+    function logout() {
+        var $ = layui.jquery;
+        $.ajax({
+            url: '/loginApi/logout',
+            type: "POST",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                window.location.href = "/login";
+            }
+        })
+    }
+</script>
+
+</body>
+</html>
